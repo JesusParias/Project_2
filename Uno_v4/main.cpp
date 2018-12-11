@@ -16,33 +16,39 @@ using namespace std;
 int *drawOne(int *,int &);
 int *drawTwo(int *,int &);
 int *drawFour(int *,int &);
-
-void disCard(char *,int *,int);
-void disHnds(char *,int *,int);
+int ***fillUHnd(int *,int *,int);
 void disUno();
-string getCrdC(char *,int);
-string getCrdN(int *,int);
-
+void disUHnd(int ***,int);
+int *getCrdC(int *,int);
+int *getCrdN(int *,int);
 int *iniDCV(int *,int);
-char *iniDCC(char *);
+int *iniDCC(int *);
 
 int main(int argc, char** argv) {
     
     srand(static_cast<unsigned int>(time(0)));
-    
-    int tempR = 10;
-    int tempC = 5;
-    
+     
     int dSize = 108; 
     int *deckCV = new int[dSize];
-    char *deckCC = new char[dSize];
+    int *deckCC = new int[dSize];
     
     deckCV=iniDCV(deckCV,dSize);
     deckCC=iniDCC(deckCC);
+    int ***array = new int **[5];
+    for(int a=0;a<5;a++){
+        array[a]=new int *[11];
+        for(int b=0;b<11;b++){
+            array[a][b]=new int [dSize];
+        }
+    }
+    array=fillUHnd(deckCC,deckCV,7);
+    
+    disUHnd(array,7);
+    
+    
     
     return 0;
 }
-
 int *drawOne(int *hand,int &size){
     int *newHand = new int[size++];
     
@@ -78,29 +84,6 @@ int *drawFour(int *hand,int &size){
     delete []hand;
     return newHand;
 }
-void disCards(char *handC, int *handV,int size){
-   
-    /*for(int n=0;n<size;n++){
-     * 
-        cout<<b<<b<<b<<b<<b<<b<<b<<b<<b<<b<<" ";
-    }cout<<endl;
-    for(int n=0;n<size;n++){
-        cout<<q<< "        "<<q<<" ";
-    }cout<<endl;
-    for(int n=0;n<size;n++){
-        cout<<q<<" "<<fixed<<setw(3)<<setfill(' ')<<handC[n]<<fixed<<setw(3)<<setfill(' ')<<handV[n]<<" "<<q<<" ";
-    }cout<<endl;
-    for(int n=0;n<size;n++){
-        cout<<q<< "        "<<q<<" ";
-    }cout<<endl;
-    for(int n=0;n<size;n++){
-        cout<<b<<b<<b<<b<<b<<b<<b<<b<<b<<b<<" ";
-    }cout<<endl;
-     */
-}
-void disHnds(char *handC,int *handV,int size){
-    disCards(handC,handV,size);
-}
 void disUno(){
     cout
             <<"__   __  __   __   _______  !!\n"
@@ -125,12 +108,12 @@ int *iniDCV(int *deck, int dSize){
     //Return the random color
     return deck;
 }
-char *iniDCC(char *deck){
-    char r='R', 
-            y='Y',
-            g='G',
-            b='B',
-            w='W';
+int *iniDCC(int *deck){
+    int r=static_cast<unsigned int>('R'), 
+            y=static_cast<unsigned int>('Y'),
+            g=static_cast<unsigned int>('G'),
+            b=static_cast<unsigned int>('B'),
+            w=static_cast<unsigned int>('W');
     for(int n=0;n<25;n++){
         deck[n]=r;
     }for(int n=25;n<50;n++){
@@ -144,120 +127,189 @@ char *iniDCC(char *deck){
     }
     return deck;
 }
-string getCrdC(char *deck, int size){
-    if(deck[size]=='r'){
+int *getCrdC(int *card, int local){
+    if(card[local]=='R'){
         string red = "Red";
-        return red;
-    }else if(deck[size]=='y'){
-        string yellow = "Yel";
-        return yellow;
-    }else if(deck[size]=='g'){
-        string green = "Grn";
-        return green;
-    }else if(deck[size]=='b'){
-        string blue = "Blu";
-        return blue;
-    }else if(deck[size]=='w'){
-        string wild = "Wld";
-        return wild;
-    }
-}
-string getCrdN(int *deck, int size){
-    if(deck[size]==0){
-        string zero = "  0";
-        return zero;
-    }else if(deck[size]==1){
-        string one= "  1";
-        return one;
-    }else if(deck[size]==2){
-        string two = "  2";
-        return two;
-    }else if(deck[size]==3){
-        string three = "  3";
-        return three;
-    }else if(deck[size]==4){
-        string four = "  4";
-        return four;
-    }else if(deck[size]==5){
-        string  five= "  5";
-        return five;
-    }else if(deck[size]==6){
-        string  six= "  6";
-        return six;
-    }else if(deck[size]==7){
-        string  seven= "  7";
-        return seven;
-    }else if(deck[size]==8){
-        string  eight= "  8";
-        return eight;
-    }else if(deck[size]==9){
-        string  nine = "  9";
-        return nine;
-    }else if(deck[size]==10){
-        string  skip = "Skp";
-        return skip;
-    }else if(deck[size]==11){
-        string  reverse= "Rev";
-        return reverse;
-    }else if(deck[size]==12){
-        string  add2= " +2";
-        return add2;
-    }else if(deck[size]==20){
-        string  wild= "   ";
-        return wild;
-    }else if(deck[size]==21){
-        string  add4= " +4";
-        return add4;
-    }
-}
-char ***fillUHnd(int size){
-    char b= 254;    //top,bottem
-    char q='|';     //side
-    char s=' ';
-    int lineSize = 11;
-    int row = 5;
-    int setSize=size/6;
-    int *set = new int[setSize]; 
-    char line[row][lineSize][set];
-    for(int i=0;i<row;i++){
-        if(i==0){
-            for(int n=0;n<lineSize;n++){
-                line[i][n][set]=b;
-            }line[i][lineSize-1][set]=s;
-        }else if(i==1){
-            line[i][0][set]=q;
-            line[i][lineSize-2][set]=q;
-            line[i][lineSize-1][set]=s;
-            for(int n=1;n<lineSize-2;n++){
-                line[i][n][set]=s;
-            }
-        }else if(i==2){
-            line[i][0][set]=q;
-            line[i][1][set]=s;
-            for(int n=2;n<8;n++){
-                string *tempC = new int[3];
-                string *tempN = new int[3];
-                tempC =getCrdC(line,size);
-                tempN =getCrdN(line,size);
-                line[i][n][set]=tempC[n-2];
-                line[i][n][set]=tempN[n-5];
-                delete tempC;
-                delete tempN;
-            }
-            line[i][lineSize-3][set]=s;
-            line[i][lineSize-2][set]=q;
-            line[i][lineSize-1][set]=s;
-        }else if(i==3){
-            line[i][0][set]=q;
-            line[i][lineSize-2][set]=q;
-            line[i][lineSize-1][set]=s;
-            for(int n=1;n<lineSize-2;n++){
-                line[i][n][set]=s;
-            }
-        }else if(i==4){
-            for(int n=0;n<lineSize;n++){
-                line[i][n][set]=b;
-            }line[i][lineSize-1][set]=' ';
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(red[n]);
         }
+    }else if(card[local]=='Y'){
+        string yellow = "Yel";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(yellow[n]);
+        }
+    }else if(card[local]=='G'){
+        string green = "Grn";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(green[n]);
+        }
+    }else if(card[local]=='B'){
+        string blue = "Blu";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(blue[n]);
+        }
+    }else if(card[local]=='W'){
+        string wild = "Wld";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(wild[n]);
+        }
+    }return card;
+}
+int *getCrdV(int *card, int local){
+    if(card[local]==0){
+        string zero = "  0";
+        int *value = new int[3];
+        for(int n=0;n<3;n++){
+            value[n]=static_cast<unsigned int>(zero[n]);
+        }
+        return value;
+    }else if(card[local]==1){
+        string one= "  1";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(one[n]);
+        }
+    }else if(card[local]==2){
+        string two = "  2";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(two[n]);
+        }
+    }else if(card[local]==3){
+        string three = "  3";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(three[n]);
+        }
+    }else if(card[local]==4){
+        string four = "  4";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(four[n]);
+        }
+    }else if(card[local]==5){
+        string  five= "  5";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(five[n]);
+        }
+    }else if(card[local]==6){
+        string  six= "  6";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(six[n]);
+        }
+    }else if(card[local]==7){
+        string  seven= "  7";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(seven[n]);
+        }
+    }else if(card[local]==8){
+        string  eight= "  8";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(eight[n]);
+        }
+    }else if(card[local]==9){
+        string  nine = "  9";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(nine[n]);
+        }
+    }else if(card[local]==10){
+        string  skip = "Skp";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(skip[n]);
+        }
+    }else if(card[local]==11){
+        string  reverse= "Rev";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(reverse[n]);
+        }
+    }else if(card[local]==12){
+        string  add2= " +2";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(add2[n]);
+        }
+    }else if(card[local]==20){
+        string  wild= "   ";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(wild[n]);
+        }
+    }else if(card[local]==21){
+        string  add4= " +4";
+        for(int n=0;n<3;n++){
+            card[n]=static_cast<unsigned int>(add4[n]);
+        }
+    }return card;
+}
+int ***fillUHnd(int *handC, int *handV,int local){
+    int b= 254;    //top,bottem
+    int q=124;     //side
+    int s=32;
+    const int lineSize=11;
+    const int row=5;
+    int set=local/5;
+    
+    int ***line = new int **[row];
+    for(int a=0;a<row;a++){
+        line[a]=new int *[lineSize];
+        for(int b=0;b<lineSize;b++){
+            line[a][b]=new int [set];
+        }
+    } 
+    for(int k=0;k<set;k++){
+            for(int i=0;i<row;i++){
+                if(i==0){
+                    for(int n=0;n<lineSize;n++){
+                        line[i][n][k]=b;
+                    }line[i][lineSize-1][k]=s;
+                }else if(i==1){
+                    line[i][0][k]=q;
+                    line[i][lineSize-2][k]=q;
+                    line[i][lineSize-1][k]=s;
+                    for(int n=1;n<lineSize-2;n++){
+                        line[i][n][k]=s;
+                    }
+                }else if(i==2){
+                    line[i][0][k]=q;
+                    line[i][1][k]=s;
+                    int *tempC = new int[3];
+                    tempC =getCrdC(handC,3);
+                    for(int p=0; p<3;p++){
+                        for(int n=2;n<5;n++){
+                            line[i][n][k]=tempC[n-2];
+                        }
+                    }
+                    delete []tempC;
+                    int *tempV = new int[3];
+                    tempV =getCrdV(handV,3);
+                    for(int p=0; p<3;p++){
+                        for(int n=5;n<8;n++){
+                            line[i][n][k]=tempV[n-5];
+                        }
+                    }
+                    delete []tempV;
+                    line[i][lineSize-3][k]=s;
+                    line[i][lineSize-2][k]=q;
+                    line[i][lineSize-1][k]=s;
+                }else if(i==3){
+                    line[i][0][k]=q;
+                    line[i][lineSize-2][k]=q;
+                    line[i][lineSize-1][k]=s;
+                    for(int n=1;n<lineSize-2;n++){
+                        line[i][n][k]=s;
+                    }
+                }else if(i==4){
+                    for(int n=0;n<lineSize;n++){
+                        line[i][n][k]=b;
+                    }line[i][lineSize-1][k]=s;
+                }
+            }
+        
+    }
+    return line;
+}
+void disUHnd(int ***line,int cards){
+    for(int k=0;k<cards/5;k++){
+        for(int i=0;i<5;i++){
+            for(int c=0; c<cards;c++){
+                for(int n=0;n<11;n++){
+                    cout<<static_cast<char>(line[i][n][k]);
+                }//cout<<endl;
+            }cout<<endl;
+        }cout<<endl;
     }
 }
